@@ -1,0 +1,16 @@
+body {
+    background: #8d7878;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.card {
+    padding: 20px;
+}
+
+h3 {
+    color: #8d2427;
+}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charging Stations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="green darken-3">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">EV Charging Station</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#" class="modal-trigger" data-target="add-station-modal">Add Station</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <h2 class="center-align">Find EV Charging Stations</h2>
+                <p class="center-align">Browse through available charging stations or add a new one.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12 m6 offset-m3">
+                <i class="material-icons prefix">search</i>
+                <input id="search-input" type="text" class="validate">
+                <label for="search-input">Search by location or name</label>
+            </div>
+        </div>
+
+        <div class="row" id="stations-container">
+        </div>
+    </div>
+
+    <div id="add-station-modal" class="modal">
+        <div class="modal-content">
+            <h4>Add New Charging Station</h4>
+            <div class="row">
+                <form id="add-station-form" class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="station-name" type="text" class="validate" required>
+                            <label for="station-name">Station Name</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="station-address" type="text" class="validate" required>
+                            <label for="station-address">Address</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="station-city" type="text" class="validate" required>
+                            <label for="station-city">City</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="station-state" type="text" class="validate" required>
+                            <label for="station-state">State</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select id="station-type" required>
+                                <option value="" disabled selected>Choose type</option>
+                                <option value="Level 1">Level 1 (120V)</option>
+                                <option value="Level 2">Level 2 (240V)</option>
+                                <option value="DC Fast">DC Fast Charger</option>
+                                <option value="Tesla">Tesla Supercharger</option>
+                            </select>
+                            <label>Charger Type</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="station-cost" type="number" step="0.01" min="0" class="validate">
+                            <label for="station-cost">Cost per kWh ($)</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <textarea id="station-description" class="materialize-textarea"></textarea>
+                            <label for="station-description">Description</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="station-image" type="text" class="validate">
+                            <label for="station-image">Image URL (optional)</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light green darken-2" id="submit-station">
+                Add Station
+                <i class="material-icons right">send</i>
+            </button>
+            <button class="btn-flat waves-effect waves-light modal-close">Cancel</button>
+        </div>
+    </div>
+
+    <div id="station-details-modal" class="modal">
+        <div class="modal-content">
+            <h4 id="detail-station-name"></h4>
+            <div class="row">
+                <div class="col s12 m6">
+                    <img id="detail-station-image" src="" alt="Station Image" class="responsive-img">
+                </div>
+                <div class="col s12 m6">
+                    <p><strong>Address: </strong><span id="detail-station-address"></span></p>
+                    <p><strong>City: </strong><span id="detail-station-city"></span></p>
+                    <p><strong>State: </strong><span id="detail-station-state"></span></p>
+                    <p><strong>Charger Type: </strong><span id="detail-station-type"></span></p>
+                    <p><strong>Cost per kWh: </strong>$<span id="detail-station-cost"></span></p>
+                    <p><strong>Description: </strong><span id="detail-station-description"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light amber darken-2" id="edit-station">
+                Edit
+                <i class="material-icons right">edit</i>
+            </button>
+            <button class="btn waves-effect waves-light red darken-2" id="delete-station">
+                Delete
+                <i class="material-icons right">delete</i>
+            </button>
+            <button class="btn-flat waves-effect waves-light modal-close">Close</button>
+        </div>
+    </div>
+
+    <div id="edit-station-modal" class="modal">
+        <div class="modal-content">
+            <h4>Edit Charging Station</h4>
+            <div class="row">
+                <form id="edit-station-form" class="col s12">
+                    <input type="hidden" id="edit-station-id">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="edit-station-name" type="text" class="validate" required>
+                            <label for="edit-station-name">Station Name</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="edit-station-address" type="text" class="validate" required>
+                            <label for="edit-station-address">Address</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="edit-station-city" type="text" class="validate" required>
+                            <label for="edit-station-city">City</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="edit-station-state" type="text" class="validate" required>
+                            <label for="edit-station-state">State</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select id="edit-station-type" required>
+                                <option value="" disabled>Choose type</option>
+                                <option value="Level 1">Level 1 (120V)</option>
+                                <option value="Level 2">Level 2 (240V)</option>
+                                <option value="DC Fast">DC Fast Charger</option>
+                                <option value="Tesla">Tesla Supercharger</option>
+                            </select>
+                            <label>Charger Type</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="edit-station-cost" type="number" step="0.01" min="0" class="validate">
+                            <label for="edit-station-cost">Cost per kWh ($)</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <textarea id="edit-station-description" class="materialize-textarea"></textarea>
+                            <label for="edit-station-description">Description</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="edit-station-image" type="text" class="validate">
+                            <label for="edit-station-image">Image URL (optional)</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light green darken-2" id="update-station">
+                Update Station
+                <i class="material-icons right">save</i>
+            </button>
+            <button class="btn-flat waves-effect waves-light modal-close">Cancel</button>
+        </div>
+    </div>
+
+    <footer class="page-footer green darken-3">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <h5 class="white-text">EV Charging Finder</h5>
+                    <p class="grey-text text-lighten-4">Find and share EV charging stations near you.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2025 EV Charging Finder
+                <a class="grey-text text-lighten-4 right" href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
